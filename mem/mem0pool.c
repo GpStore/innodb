@@ -56,3 +56,31 @@ mem_area_set_free(
 {
   area->size_and_free = (area->size_and_free & ~MEM_AREA_FREE) | free;
 }
+
+mem_pool_t*
+mem_pool_create（
+  ulint size)
+{
+  mem_pool_t* pool;
+  mem_area_t* area;
+  ulint i;
+  ulint used;
+  pool = ut_maloc(sizeof(mem_pool_t));
+  pool_buf = ut_malloc(size);
+  pool_size = size;
+  
+  mutex_create(&(pool->mutex));
+  mutex_set_level(&(pool->mutex), SYNC_MEM_POOL);
+  
+  for(i = 0; i < 64; i++) {
+    UT_LIST_INIT(pool->free_list[i]);
+  }
+  used = 0;
+  while(size - used >= MEM_AREA_MIN_SIZE) {
+    i = ut_2_log(size - used);
+    if (ut_2_exp(i) > size - used) {
+      i--;
+    }
+    
+  }
+}
